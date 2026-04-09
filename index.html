@@ -25,11 +25,10 @@
     .controls{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
     @media (max-width: 620px){ .controls{grid-template-columns:1fr} }
     label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px}
-    input, select, button, textarea{
+    input, select, button{
       width:100%; box-sizing:border-box; border-radius:10px; border:1px solid #243244;
       background:#0b1220; color:var(--text); padding:9px 10px; font-size:13px; outline:none;
     }
-    textarea{min-height:90px; font-family:var(--mono); font-size:12px}
     button{cursor:pointer; border:1px solid #334155; background:#0b1220}
     button.primary{background:#14532d; border-color:#16a34a}
     button.secondary{background:#0b1220}
@@ -60,24 +59,24 @@
       <div class="title">
         <h1>Ratio: Cyclical vs Defensive</h1>
         <p>
-          Tracks a basket of cyclical sector ETFs versus defensive sector ETFs to spot sustained “growth scare” rotations.
-          Designed to be embedded in Notion via a public URL (no login required).
+          Tracks a basket of cyclical sector ETFs versus defensive sector ETFs using a daily CSV file.
+          The CSV is generated offline from Alpha Vantage, then this page reads it as static data.
         </p>
       </div>
-      <div class="pill" id="buildInfo">Build: <span class="mono" id="buildDate">—</span></div>
+      <div class="pill" id="buildInfo">Build: <span class="mono" id="buildDate">-</span></div>
     </div>
 
     <div class="grid">
       <div class="card">
         <div style="display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
           <div class="pill">Growth Ratio (normalized baskets)</div>
-          <div class="pill" id="ratioBadge">Status: —</div>
+          <div class="pill" id="ratioBadge">Status: -</div>
         </div>
         <canvas id="ratioChart" height="140"></canvas>
         <div class="status" id="statusLine">
           <span class="dot ok" id="statusDot"></span>
           <span id="statusText">Ready.</span>
-          <span class="pill" id="cacheInfo">Cache: —</span>
+          <span class="pill" id="cacheInfo">CSV: -</span>
         </div>
 
         <div class="row" style="margin-top:12px;">
@@ -85,15 +84,8 @@
             <div class="pill">Inputs</div>
             <div class="controls">
               <div>
-                <label>Alpha Vantage API Key (required for live prices)</label>
-                <input id="avKey" placeholder="paste key here (stored locally in your browser)" />
-              </div>
-              <div>
-                <label>Lookback</label>
-                <select id="lookback">
-                  <option value="compact" selected>~100 trading days (fast)</option>
-                  <option value="full">Full history (slow / large)</option>
-                </select>
+                <label>CSV File Used By The Dashboard</label>
+                <input id="csvPath" value="./data/etf_prices.csv" readonly />
               </div>
               <div>
                 <label>Start Date (optional override)</label>
@@ -108,17 +100,22 @@
                   <option value="20">20</option>
                 </select>
               </div>
+              <div>
+                <label>Daily Refresh Workflow</label>
+                <div class="small" style="padding-top:10px;">
+                  Run the PowerShell updater once per day, then reload this page.
+                </div>
+              </div>
             </div>
 
             <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-              <button class="primary" id="runBtn">Fetch & Update</button>
-              <button class="secondary" id="demoBtn">Demo Mode (no API)</button>
-              <button class="secondary" id="clearBtn">Clear Cache</button>
+              <button class="primary" id="loadBtn">Load CSV Data</button>
+              <button class="secondary" id="demoBtn">Demo Mode</button>
             </div>
 
             <div class="small" style="margin-top:10px;">
-              <div><b>Important:</b> to make the basket mathematically meaningful, each ETF is normalized to 100 at the start of the window, then averaged.</div>
-              <div style="margin-top:6px;">You can embed this in Notion once hosted publicly (GitHub Pages / Netlify). Notion embeds that require login won’t work in desktop/mobile apps. </div>
+              <div><b>Important:</b> each ETF is normalized to 100 at the start of the selected window, then averaged into its basket.</div>
+              <div style="margin-top:6px;">Updater script: <span class="mono">scripts/update-etf-data.ps1</span></div>
             </div>
           </div>
 
@@ -132,11 +129,11 @@
               </div>
               <div class="kpi">
                 <div class="s">Suggested stance</div>
-                <div class="v" id="stance">—</div>
+                <div class="v" id="stance">-</div>
               </div>
             </div>
             <div class="small" style="margin-top:8px;">
-              Tip: aim for <b>3–5 signals</b> + a persistent ratio decline (~2–3 months) to call it “real”.
+              Tip: aim for <b>3-5 signals</b> plus a persistent ratio decline over 2-3 months before calling it real.
             </div>
           </div>
         </div>
@@ -164,10 +161,11 @@
         </div>
 
         <div class="small" style="margin-top:10px;">
-          Data source options:
+          Data source workflow:
           <ul>
-            <li>Alpha Vantage Time Series (requires key; free tier has daily limits). </li>
-            <li>Economic confirmations (yield curve, credit spreads) can be added later via FRED API. </li>
+            <li>PowerShell script pulls ETF history from Alpha Vantage once per day.</li>
+            <li>The script writes one CSV file into <span class="mono">./data/etf_prices.csv</span>.</li>
+            <li>This dashboard reads that CSV as static hosted content.</li>
           </ul>
         </div>
       </div>
