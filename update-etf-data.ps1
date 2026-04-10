@@ -1,6 +1,6 @@
 param(
     [string]$ApiKey = $env:ALPHAVANTAGE_API_KEY,
-    [string]$OutputPath = "..\data\etf_prices.csv",
+    [string]$OutputPath = ".\data\etf_prices.csv",
     [int]$PauseSeconds = 15,
     [switch]$Full
 )
