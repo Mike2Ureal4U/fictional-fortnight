@@ -8,7 +8,7 @@ The page does not call Alpha Vantage directly. Instead, a PowerShell script down
 
 - Dashboard page: `index.html`
 - Dashboard logic: `app.js`
-- Data updater script: `scripts/update-etf-data.ps1`
+- Data updater script: `update-etf-data.ps1`
 - Output CSV: `data/etf_prices.csv`
 
 ## ETF baskets
@@ -33,7 +33,7 @@ Defensive:
 Open PowerShell and run:
 
 ```powershell
-cd C:\Users\micha\Documents\DEV\RunningMan\cyclical_defensive_dashboard\scripts
+cd C:\Users\micha\DEV\fictional-fortnight
 .\update-etf-data.ps1 -ApiKey "YOUR_ALPHA_VANTAGE_KEY"
 ```
 
@@ -43,7 +43,7 @@ If the script succeeds, you should see output like:
 Fetching XLI (1/9)
 ...
 Fetching GLD (9/9)
-Wrote 900 rows to C:\Users\micha\Documents\DEV\RunningMan\cyclical_defensive_dashboard\data\etf_prices.csv
+Wrote 900 rows to C:\Users\micha\DEV\fictional-fortnight\data\etf_prices.csv
 ```
 
 ## How to use the dashboard
@@ -77,6 +77,6 @@ If PowerShell says the API returned an `Information` or `Note` message:
 
 If the dashboard does not show real data:
 
-- Confirm [etf_prices.csv](C:\Users\micha\Documents\DEV\RunningMan\cyclical_defensive_dashboard\data\etf_prices.csv) exists.
+- Confirm `data\etf_prices.csv` exists.
 - Confirm the CSV has rows beyond the header.
 - Reload the page and click `Load CSV Data` again.
